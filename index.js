@@ -33,26 +33,22 @@ app.get('/profile', (req, res) => {
 });
 
 app.post('/profile', (req, res) => {
-  const { type, relation, name, picture, biography, size, weight, color, hobbie} = req.body;
+  const { type, relation, name, picture, biography } = req.body;
   const { error: validationErrors } = Joi.object({
     type: Joi.string().max(255).required(),
     relation: Joi.string().max(255).required(),
     name: Joi.string().max(255).required(),
     picture: Joi.string().max(255).required(),
-    biography: Joi.string().max(255).required(),
-    size: Joi.string().max(255).required(),
-    weight: Joi.string().max(255).required(),
-    color: Joi.string().max(255).required(),
-    hobbie: Joi.string().max(255).required(),
-}).validate({ type, relation, name, picture, biography, size, weight, color, hobbie }, { abortEarly: false });
+    biography: Joi.string().max(255).required()
+}).validate({ type, relation, name, picture, biography }, { abortEarly: false });
 
 if (validationErrors) {
     res.status(422).json({ errors: validationErrors.details });
   } else {
     connection.promise()
-    .query('INSERT INTO profile (type, relation, name, picture, biography, size, weight, color, hobbie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [type, relation, name, picture, biography, size, weight, color, hobbie])
+    .query('INSERT INTO profile (type, relation, name, picture, biography) VALUES (?, ?, ?, ?, ?)', [type, relation, name, picture, biography])
     .then(([result]) => {
-      const createProfile = { id: result.insertId, type, relation, name, picture, biography, size, weight, color, hobbie };
+      const createProfile = { id: result.insertId, type, relation, name, picture, biography };
       res.json(createProfile);
     }).catch((err) => { console.error(err); res.sendStatus(500); });
   }
