@@ -53,6 +53,20 @@ if (validationErrors) {
     }).catch((err) => { console.error(err); res.sendStatus(500); });
   }
 });
+
+app.get("/profile/:id", (req, res) => {
+  const { id } = req.params;
+  connection
+    .promise()
+    .query("SELECT * FROM profile WHERE id = ?", [id])
+    .then(([results]) => {
+      if (results.length) {
+        res.json(results[0]);
+      } else {
+        res.sendStatus(404);
+      }
+    });
+});
  
 app.listen(serverPort, () => {
   console.log(`Server listening on port ${serverPort}`);
